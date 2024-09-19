@@ -1,0 +1,25 @@
+{
+  "name": "animal-time-client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.2.12",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.4",
+    "@babel/preset-react": "^7.24.7",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.12",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1"
+  }
+}
