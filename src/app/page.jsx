@@ -1,41 +1,85 @@
 "use client";
-
-import { react, useState } from "react";
+import { useEffect, useState } from "react";
+import { useAxios } from "./hooks/useAxios";
 
 export default function Home() {
   const [showAddCategory, setShowAddCategory] = useState(false);
   const [showAddAnimal, setShowAddAnimal] = useState(false);
+  const [categoryError, setCategoryError] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  const axiosUrl = useAxios();
 
   const handleClose = (event) => {
     if (event.target.classList.contains("modal-backdrop")) {
-      setShowAddCategory(false);
-      setShowAddAnimal(false);
+      if (showAddCategory) setShowAddCategory(false);
+      if (showAddAnimal) setShowAddAnimal(false);
     }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const res = await axiosUrl.get(`/categories`);
+      setCategories(res.data);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, [axiosUrl]);
+
+  const handleCategorySubmit = async (e) => {
+    e.preventDefault();
+
+    const category = {
+      category_name: e.target.category.value,
+    };
+
+    await axiosUrl
+      .post(`/categories`, category)
+      .then((res) => {
+        // console.log(res.data);
+        if (res.data.insertedId) {
+          setShowAddCategory(false);
+          fetchCategories();
+        }
+      })
+      .catch((error) => {
+        setCategoryError(error.response.data.message);
+      });
   };
 
   return (
     <>
       <div className="min-h-screen w-full px-20 py-8">
-        <ul className="flex text-lg justify-between">
-          <div className="flex gap-x-4">
+        <ul className="flex text-lg text-center justify-between">
+          <div className="grid grid-cols-4 gap-x-4">
             {" "}
-            <li className="px-5 py-3 border rounded-full cursor-pointer">
-              Land Animal
-            </li>
-            <li className="px-5 py-3 border rounded-full cursor-pointer">
-              Land Animal
-            </li>
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <li className="px-5 mb-5 py-3 border rounded-full cursor-pointer">
+                  {category.category_name}
+                </li>
+              ))
+            ) : (
+              <></>
+            )}
           </div>
-          <div className="flex gap-x-4">
+          <div className="grid grid-cols-2 h-fit gap-x-4">
             {" "}
             <li
               onClick={() => setShowAddAnimal(true)}
-              className="px-5 py-3 border rounded-full cursor-pointer"
+              className="px-3 py-3 border rounded-full cursor-pointer"
             >
               Add Animal
             </li>
             <li
-              onClick={() => setShowAddCategory(true)}
+              onClick={() => {
+                setShowAddCategory(true);
+                setCategoryError("");
+              }}
               className="px-5 py-3 border rounded-full cursor-pointer"
             >
               Add Category
@@ -51,16 +95,23 @@ export default function Home() {
           >
             <div
               className="bg-white p-6 rounded-3xl max-w-sm w-full"
-              onClick={(event) => event.stopPropagation()} // Prevent click through the modal content
+              onClick={(event) => event.stopPropagation()}
             >
               <h2 className="text-xl text-black mb-4">Add Category</h2>
-              <form>
+              <form onSubmit={handleCategorySubmit}>
                 <div className="mb-4">
                   <input
+                    name="category"
                     type="text"
+                    required
                     className="w-full text-black px-6 py-3 border rounded-md bg-gray-100"
                     placeholder="Name"
                   />
+                  {categoryError && (
+                    <p className="text-rose-500 text-sm ml-1">
+                      {categoryError}
+                    </p>
+                  )}
                 </div>
                 <button
                   type="submit"
