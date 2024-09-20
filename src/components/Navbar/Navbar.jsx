@@ -97,7 +97,6 @@ const Navbar = ({
           animal_category: selectedCategory,
           image: res.data.data.display_url,
         };
-        console.log(animal);
 
         const animalRes = await axiosUrl.post("/animals", animal);
         if (animalRes.data.insertedId) {
