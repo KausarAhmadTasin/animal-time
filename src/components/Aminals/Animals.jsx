@@ -1,14 +1,20 @@
 import React from "react";
 import Image from "next/image";
 
-const Animals = ({ animals }) => {
+const Animals = ({ animals, animalsLoading }) => {
+  if (animalsLoading)
+    return (
+      <div className="flex w-full items-center justify-center h-96">
+        <div className="w-12 h-12 border-y-4 border-[#028CCB] rounded-full animate-spin"></div>
+      </div>
+    );
   return (
     <section className="container mx-auto">
       <div className="grid w-full grid-cols-6">
         {animals.length > 0 ? (
           animals.map((animal) => (
             <div
-              className="flex flex-col mb-2 items-center justify-center"
+              className="flex flex-col mb-1 items-center justify-center"
               key={animal._id}
             >
               {" "}

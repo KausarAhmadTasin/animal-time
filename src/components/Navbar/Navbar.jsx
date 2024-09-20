@@ -1,22 +1,31 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {  toast } from "react-toastify";
-import { useAxios } from "@/app/hooks/useAxios";
+import { toast } from "react-toastify";
 import { fetchCategories } from "@/utils/fetchCategories";
+import { fetchAnimals } from "@/utils/fetchAnimals";
+import { useAxios } from "@/hooks/useAxios";
 
 const image_hosting_key = process.env.NEXT_PUBLIC_IMAGE_HOSTING_KEY;
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
-const Navbar = ({ categories, setAnimals, setCategories }) => {
+const Navbar = ({
+  categories,
+  setAnimals,
+  setCategories,
+  setAnimalsLoading,
+}) => {
   const [showAddCategory, setShowAddCategory] = useState(false);
   const [showAddAnimal, setShowAddAnimal] = useState(false);
+
   const [imageName, setImageName] = useState("");
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [categorySelect, setCategorySelect] = useState("All");
+
+  const [navSelectedCategory, setNavSelectedCategory] = useState("All");
 
   const [categoryError, setCategoryError] = useState("");
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   const axiosUrl = useAxios();
 
@@ -28,23 +37,23 @@ const Navbar = ({ categories, setAnimals, setCategories }) => {
   };
 
   const loadCategories = async () => {
-    const data = await fetchCategories();
-    setCategories(data);
+    setCategoriesLoading(true);
+    const category = await fetchCategories();
+    setCategories(category);
+    setCategoriesLoading(false);
   };
 
-  const fetchAnimals = async () => {
-    try {
-      const res = await axiosUrl.get(`/animals?category=${categorySelect}`);
-      setAnimals(res.data);
-    } catch (err) {
-      console.error("Error fetching animals:", err);
-    }
+  const loadAnimals = async () => {
+    setAnimalsLoading(true);
+    const animals = await fetchAnimals(navSelectedCategory);
+    setAnimals(animals);
+    setAnimalsLoading(false);
   };
 
   useEffect(() => {
     loadCategories();
-    fetchAnimals();
-  }, [axiosUrl, categorySelect]);
+    loadAnimals();
+  }, [axiosUrl, navSelectedCategory]);
 
   const handleCategorySubmit = async (e) => {
     e.preventDefault();
@@ -104,25 +113,27 @@ const Navbar = ({ categories, setAnimals, setCategories }) => {
 
   return (
     <div>
-      <ul className="flex mb-4 text-base text-center justify-between">
+      <ul className="flex mb-2 text-base text-center justify-between">
         <div className="grid grid-cols-5 gap-x-4">
-          {" "}
-          {categories.length > 0 ? (
+          {categoriesLoading ? (
+            <p className="text-center py-5 text-gray-300">
+              Loading categories...
+            </p>
+          ) : (
+            categories.length > 0 &&
             categories.map((category) => (
               <li
                 key={category._id}
                 className={`px-5 mb-5 py-3 border-2 rounded-full cursor-pointer ${
-                  categorySelect === category.category_name
+                  navSelectedCategory === category.category_name
                     ? "border-[#058F34] text-[#058F34]"
                     : "border-[#EF0D0D] text-[#EF0D0D]"
                 }`}
-                onClick={() => setCategorySelect(category.category_name)}
+                onClick={() => setNavSelectedCategory(category.category_name)}
               >
                 {category.category_name}
               </li>
             ))
-          ) : (
-            <></>
           )}
         </div>
         <div className="grid grid-cols-2 h-fit gap-x-4">
