@@ -10,7 +10,7 @@ const Animals = ({ animals, animalsLoading }) => {
     );
   return (
     <section className="container mx-auto">
-      <div className="grid w-full grid-cols-6">
+      <div className="grid w-full grid-cols-1 md:grid-cols-4 lg:grid-cols-6">
         {animals.length > 0 ? (
           animals.map((animal) => (
             <div

@@ -52,8 +52,11 @@ const Navbar = ({
 
   useEffect(() => {
     loadCategories();
+  }, [axiosUrl]);
+
+  useEffect(() => {
     loadAnimals();
-  }, [axiosUrl, navSelectedCategory]);
+  }, [navSelectedCategory]);
 
   const handleCategorySubmit = async (e) => {
     e.preventDefault();
@@ -113,8 +116,8 @@ const Navbar = ({
 
   return (
     <div>
-      <ul className="flex mb-2 text-base text-center justify-between">
-        <div className="grid grid-cols-5 gap-x-4">
+      <ul className="flex gap-x-3 mb-2 text-base text-center justify-between">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-x-4">
           {categoriesLoading ? (
             <p className="text-center py-5 text-gray-300">
               Loading categories...
@@ -136,7 +139,7 @@ const Navbar = ({
             ))
           )}
         </div>
-        <div className="grid grid-cols-2 h-fit gap-x-4">
+        <div className="grid grid-cols-1 gap-y-4 md:grid-cols-2 h-fit gap-x-4">
           {" "}
           <li
             onClick={() => {

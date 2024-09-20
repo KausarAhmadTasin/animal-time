@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <>
       <ToastContainer />
-      <div className="min-h-screen w-full px-14 py-8">
+      <div className="min-h-screen w-ful px-4 l md:px-14 py-4 md:py-8">
         {/* Navbar controls */}
         <Navbar
           setAnimals={setAnimals}
