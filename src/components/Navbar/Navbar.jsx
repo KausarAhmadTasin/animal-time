@@ -102,7 +102,7 @@ const Navbar = ({
         if (animalRes.data.insertedId) {
           toast.success("Animal added!");
           setShowAddAnimal(false);
-          fetchAnimals();
+          loadAnimals();
         }
       }
     } catch (error) {
